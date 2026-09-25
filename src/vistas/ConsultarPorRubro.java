@@ -4,17 +4,33 @@
  */
 package vistas;
 
+import entidades.Categoria;
+import entidades.CategoriaData;
+import entidades.Producto;
+import entidades.ProductoData;
+import java.util.ArrayList;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author marti
  */
 public class ConsultarPorRubro extends javax.swing.JInternalFrame {
 
+    private CategoriaData cd;
+    private ProductoData pd;
+    private DefaultTableModel modelo;
+
     /**
      * Creates new form ConsultarPorRubro
      */
     public ConsultarPorRubro() {
         initComponents();
+        pd = new ProductoData();
+        cd = new CategoriaData();
+        modelo = new DefaultTableModel();
+        llenarCM();
+        llenarCabezera();
     }
 
     /**
@@ -32,13 +48,14 @@ public class ConsultarPorRubro extends javax.swing.JInternalFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         tableConsultaRubro = new javax.swing.JTable();
 
+        setClosable(true);
         setPreferredSize(new java.awt.Dimension(556, 410));
 
-        jLabel1.setText("jLabel1");
+        jLabel1.setText("Listado por rubro");
 
-        jLabel2.setText("jLabel2");
+        jLabel2.setText("Rubro");
 
-        cmbObtenerCategoria.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cmbObtenerCategoria.addActionListener(this::cmbObtenerCategoriaActionPerformed);
 
         tableConsultaRubro.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -61,9 +78,9 @@ public class ConsultarPorRubro extends javax.swing.JInternalFrame {
                 .addGap(154, 154, 154)
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 245, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGroup(layout.createSequentialGroup()
-                .addGap(65, 65, 65)
+                .addGap(71, 71, 71)
                 .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(cmbObtenerCategoria, javax.swing.GroupLayout.PREFERRED_SIZE, 222, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGroup(layout.createSequentialGroup()
                 .addGap(65, 65, 65)
@@ -85,12 +102,75 @@ public class ConsultarPorRubro extends javax.swing.JInternalFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void cmbObtenerCategoriaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbObtenerCategoriaActionPerformed
+        // TODO add your handling code here:        
+        llenarTabla();
+    }//GEN-LAST:event_cmbObtenerCategoriaActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JComboBox<String> cmbObtenerCategoria;
+    private javax.swing.JComboBox<Categoria> cmbObtenerCategoria;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable tableConsultaRubro;
     // End of variables declaration//GEN-END:variables
+
+    private void llenarCM() {
+        for (Categoria c : cd.obtenerCategoria()) {
+            cmbObtenerCategoria.addItem(c);
+
+            cmbObtenerCategoria.setSelectedIndex(0);
+        }
+    }
+
+    private void llenarCabezera() {
+        ArrayList<Object> c = new ArrayList<>();
+        c.add("ID");
+        c.add("Codigo");
+        c.add("Descripcion");
+        c.add("Precio");
+        c.add("Categoria");
+        c.add("Stock");
+
+        for (Object it : c) {
+            modelo.addColumn(it);
+            tableConsultaRubro.setModel(modelo);
+
+        }
+    }
+
+ private void llenarTabla() {
+
+    borrarFila();
+
+    Categoria sel = (Categoria) cmbObtenerCategoria.getSelectedItem();
+
+    if (sel == null) {
+        return;
+    }
+
+    for (Producto p : pd.obtenerProducto()) {
+
+        if (p.getCategoria().equals(sel)) {
+
+            modelo.addRow(new Object[]{
+                p.getIdProducto(),
+                p.getCodigo(),
+                p.getDescripcion(),
+                p.getPrecio(),
+                p.getCategoria(),
+                p.getStock()
+            });
+        }
+    }
+}
+
+    private void borrarFila() {
+        int a = modelo.getRowCount() - 1;
+
+        for (int i = a; i >= 0; i--) {
+            modelo.removeRow(i);
+        }
+    }
 }
