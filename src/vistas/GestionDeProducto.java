@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JInternalFrame.java to edit this template
- */
 package vistas;
 
 import entidades.Categoria;
@@ -12,10 +8,6 @@ import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
-/**
- *
- * @author marti
- */
 public class GestionDeProducto extends javax.swing.JInternalFrame {
 
     private CategoriaData cd;
@@ -81,6 +73,7 @@ public class GestionDeProducto extends javax.swing.JInternalFrame {
         cmbFiltrarPorCategoria.addActionListener(this::cmbFiltrarPorCategoriaActionPerformed);
 
         btnActualizar.setText("Actualizar");
+        btnActualizar.setEnabled(false);
         btnActualizar.addActionListener(this::btnActualizarActionPerformed);
 
         jButton1.setText("jButton1");
@@ -173,9 +166,11 @@ public class GestionDeProducto extends javax.swing.JInternalFrame {
         );
 
         btnGuardar.setText("Guardar");
+        btnGuardar.setEnabled(false);
         btnGuardar.addActionListener(this::btnGuardarActionPerformed);
 
         btnEliminar.setText("Eliminar");
+        btnEliminar.setEnabled(false);
         btnEliminar.addActionListener(this::btnEliminarActionPerformed);
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
@@ -186,10 +181,11 @@ public class GestionDeProducto extends javax.swing.JInternalFrame {
                 .addContainerGap()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGap(16, 16, 16)
                         .addComponent(btnNuevo)
-                        .addGap(72, 72, 72)
+                        .addGap(68, 68, 68)
                         .addComponent(btnGuardar)
-                        .addGap(81, 81, 81)
+                        .addGap(69, 69, 69)
                         .addComponent(btnActualizar)
                         .addGap(57, 57, 57)
                         .addComponent(btnEliminar))
@@ -366,6 +362,7 @@ public class GestionDeProducto extends javax.swing.JInternalFrame {
         desactivarCampos();
         llenarTabla();
         btnActualizar.setEnabled(false);
+        btnEliminar.setEnabled(false);
     }//GEN-LAST:event_btnActualizarActionPerformed
 
     private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
@@ -375,6 +372,7 @@ public class GestionDeProducto extends javax.swing.JInternalFrame {
         limpiarCampos();
         desactivarCampos();
         btnEliminar.setEnabled(false);
+        btnActualizar.setEnabled(false);
     }//GEN-LAST:event_btnEliminarActionPerformed
 
     private void btnCerrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCerrarActionPerformed
@@ -404,7 +402,7 @@ public class GestionDeProducto extends javax.swing.JInternalFrame {
     private void txtCodigoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtCodigoFocusLost
         // TODO add your handling code here:
         String val = "[0-9]*";
-        if (!txtCodigo.getText().matches(val)) {
+        if (!txtCodigo.getText().matches(val) || txtCodigo.getText().isEmpty()) {
             JOptionPane.showMessageDialog(this, "Debe ingresar solo números");
             txtCodigo.requestFocus();
         }
@@ -476,7 +474,7 @@ public class GestionDeProducto extends javax.swing.JInternalFrame {
             cmbFiltrarPorCategoria.addItem(l);
             cmbRubro.addItem(l);
 
-            cmbFiltrarPorCategoria.setSelectedIndex(-1);
+            cmbFiltrarPorCategoria.setSelectedIndex(0);
         }
     }
 
@@ -500,7 +498,7 @@ public class GestionDeProducto extends javax.swing.JInternalFrame {
         txtCodigo.setText("");
         txtDescripcion.setText("");
         txtPrecio.setText("");
-        cmbRubro.setSelectedIndex(-1);
+        cmbRubro.setSelectedIndex(0);
         spnStock.setValue(0);
     }
 
@@ -543,4 +541,5 @@ public class GestionDeProducto extends javax.swing.JInternalFrame {
             modelo.removeRow(i);
         }
     }
+    
 }

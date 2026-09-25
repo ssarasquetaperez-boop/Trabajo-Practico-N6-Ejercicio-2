@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class ProductoData {
 
-    private ArrayList<Producto> lista = new ArrayList<>();
+    private static final ArrayList<Producto> lista = new ArrayList<>();
 
     public void guardarProducto(Producto p) {
         p.setIdProducto(lista.size() + 1);

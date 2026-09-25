@@ -1,15 +1,6 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package vistas;
 
-/**
- *
- * @author marti
- */
 public class Escritorio extends javax.swing.JFrame {
-    
 
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Escritorio.class.getName());
 
@@ -149,4 +140,3 @@ public class Escritorio extends javax.swing.JFrame {
     // End of variables declaration//GEN-END:variables
 
 }
-

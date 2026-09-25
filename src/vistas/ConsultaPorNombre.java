@@ -1,8 +1,9 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JInternalFrame.java to edit this template
- */
 package vistas;
+
+import entidades.Producto;
+import entidades.ProductoData;
+import java.util.ArrayList;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -10,11 +11,18 @@ package vistas;
  */
 public class ConsultaPorNombre extends javax.swing.JInternalFrame {
 
+    private ProductoData pd;
+    private DefaultTableModel modelo;
+
     /**
      * Creates new form ConsultaPorNombre
      */
     public ConsultaPorNombre() {
         initComponents();
+        pd = new ProductoData();
+        modelo = new DefaultTableModel();
+        llenarCabezera();
+        llenarTabla();
     }
 
     /**
@@ -35,6 +43,8 @@ public class ConsultaPorNombre extends javax.swing.JInternalFrame {
 
         setPreferredSize(new java.awt.Dimension(479, 320));
 
+        jPanel1.setPreferredSize(new java.awt.Dimension(500, 400));
+
         tableConsultaNombre.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
@@ -47,6 +57,12 @@ public class ConsultaPorNombre extends javax.swing.JInternalFrame {
             }
         ));
         jScrollPane1.setViewportView(tableConsultaNombre);
+
+        txtObtenerNombre.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtObtenerNombreKeyReleased(evt);
+            }
+        });
 
         jLabel1.setText("Lista por Nombre");
 
@@ -67,7 +83,7 @@ public class ConsultaPorNombre extends javax.swing.JInternalFrame {
                         .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(txtObtenerNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 281, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(39, 39, 39))
+                .addContainerGap(70, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -80,7 +96,7 @@ public class ConsultaPorNombre extends javax.swing.JInternalFrame {
                     .addComponent(txtObtenerNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(56, 56, 56)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(62, Short.MAX_VALUE))
+                .addContainerGap(96, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -88,18 +104,24 @@ public class ConsultaPorNombre extends javax.swing.JInternalFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(6, 6, 6)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 529, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(136, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(6, 6, 6)
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 374, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 118, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void txtObtenerNombreKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtObtenerNombreKeyReleased
+        // TODO add your handling code here:
+        llenarTabla();
+    }//GEN-LAST:event_txtObtenerNombreKeyReleased
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -110,4 +132,40 @@ public class ConsultaPorNombre extends javax.swing.JInternalFrame {
     private javax.swing.JTable tableConsultaNombre;
     private javax.swing.JTextField txtObtenerNombre;
     // End of variables declaration//GEN-END:variables
+
+    private void llenarCabezera() {
+        ArrayList<Object> c = new ArrayList<>();
+        c.add("ID");
+        c.add("Codigo");
+        c.add("Descripcion");
+        c.add("Precio");
+        c.add("Categoria");
+        c.add("Stock");
+
+        for (Object it : c) {
+            modelo.addColumn(it);
+            tableConsultaNombre.setModel(modelo);
+
+        }
+    }
+
+    private void llenarTabla() {
+        borrarFila();
+        String nombre = txtObtenerNombre.getText();
+
+        for (Producto p : pd.obtenerProducto()) {
+            if (p.getDescripcion().startsWith(nombre)) {
+            modelo.addRow(new Object[]{p.getIdProducto(),p.getCodigo(), p.getDescripcion(), p.getPrecio(), p.getCategoria(), p.getStock()
+            });
+        }
+        }
+    }
+
+    private void borrarFila() {
+        int a = modelo.getRowCount() - 1;
+
+        for (int i = a; i >= 0; i--) {
+            modelo.removeRow(i);
+        }
+    }
 }

@@ -31,6 +31,7 @@ public class ConsultarPorRubro extends javax.swing.JInternalFrame {
         modelo = new DefaultTableModel();
         llenarCM();
         llenarCabezera();
+        llenarTabla();
     }
 
     /**
