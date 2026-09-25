@@ -4,17 +4,35 @@
  */
 package vistas;
 
+import entidades.Categoria;
+import entidades.CategoriaData;
+import entidades.Producto;
+import entidades.ProductoData;
+import java.lang.module.ModuleDescriptor;
+import java.util.ArrayList;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author marti
  */
 public class ConsultarPorPrecio extends javax.swing.JInternalFrame {
 
+    private CategoriaData cd;
+    private ProductoData pd;
+    private DefaultTableModel modelo;
+
     /**
      * Creates new form ConsultarPorPrecio
      */
     public ConsultarPorPrecio() {
         initComponents();
+        pd = new ProductoData();
+        cd = new CategoriaData();
+        modelo = new DefaultTableModel();
+        llenarCabezera();
+
     }
 
     /**
@@ -55,6 +73,12 @@ public class ConsultarPorPrecio extends javax.swing.JInternalFrame {
         jLabel3.setText("y");
 
         jLabel1.setText("Lista por Precio");
+
+        txtPrecio2.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtPrecio2KeyReleased(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -111,6 +135,11 @@ public class ConsultarPorPrecio extends javax.swing.JInternalFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void txtPrecio2KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtPrecio2KeyReleased
+        // TODO add your handling code here:
+        llenarTabla();
+    }//GEN-LAST:event_txtPrecio2KeyReleased
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
@@ -122,4 +151,54 @@ public class ConsultarPorPrecio extends javax.swing.JInternalFrame {
     private javax.swing.JTextField txtPrecio1;
     private javax.swing.JTextField txtPrecio2;
     // End of variables declaration//GEN-END:variables
+
+    private void llenarCabezera() {
+        ArrayList<Object> c = new ArrayList<>();
+        c.add("ID");
+        c.add("Codigo");
+        c.add("Descripcion");
+        c.add("Precio");
+        c.add("Categoria");
+        c.add("Stock");
+
+        for (Object it : c) {
+            modelo.addColumn(it);
+            tableConsultaPrecio.setModel(modelo);
+
+        }
+    }
+
+    private void llenarTabla() {
+
+        borrarFila();
+
+        try {
+            double min = Double.parseDouble(txtPrecio1.getText());
+            double max = Double.parseDouble(txtPrecio2.getText());
+                for (Producto p : pd.obtenerProducto()) {
+
+                    if (p.getPrecio() >= min && p.getPrecio() <= max) {
+
+                        modelo.addRow(new Object[]{
+                            p.getIdProducto(),
+                            p.getCodigo(),
+                            p.getDescripcion(),
+                            p.getPrecio(),
+                            p.getCategoria(),
+                            p.getStock()
+                        });
+                }
+            }
+        } catch (NumberFormatException e) {
+            JOptionPane.showConfirmDialog(this, "Tiene que tener numero valido");
+        }
+    }
+
+    private void borrarFila() {
+        int a = modelo.getRowCount() - 1;
+
+        for (int i = a; i >= 0; i--) {
+            modelo.removeRow(i);
+        }
+    }
 }
