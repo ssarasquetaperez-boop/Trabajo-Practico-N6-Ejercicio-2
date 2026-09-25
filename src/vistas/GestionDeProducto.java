@@ -4,17 +4,37 @@
  */
 package vistas;
 
+import entidades.Categoria;
+import entidades.CategoriaData;
+import entidades.Producto;
+import entidades.ProductoData;
+import java.util.ArrayList;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author marti
  */
 public class GestionDeProducto extends javax.swing.JInternalFrame {
 
+    private CategoriaData cd;
+    private ProductoData pd;
+    private DefaultTableModel modelo;
+    private Producto productoElegido;
+
     /**
      * Creates new form ConsultarPorNombre
      */
     public GestionDeProducto() {
         initComponents();
+        pd = new ProductoData();
+        cd = new CategoriaData();
+        modelo = new DefaultTableModel();
+        llenarCM();
+        desactivarCampos();
+        llenarCabezera();
+
     }
 
     /**
@@ -58,14 +78,36 @@ public class GestionDeProducto extends javax.swing.JInternalFrame {
         setPreferredSize(new java.awt.Dimension(610, 680));
 
         cmbFiltrarPorCategoria.setToolTipText("");
+        cmbFiltrarPorCategoria.addActionListener(this::cmbFiltrarPorCategoriaActionPerformed);
 
         btnActualizar.setText("Actualizar");
+        btnActualizar.addActionListener(this::btnActualizarActionPerformed);
 
         jButton1.setText("jButton1");
 
         btnNuevo.setText("Nuevo");
+        btnNuevo.addActionListener(this::btnNuevoActionPerformed);
 
         btnCerrar.setText("Cerrar");
+        btnCerrar.addActionListener(this::btnCerrarActionPerformed);
+
+        txtCodigo.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtCodigoFocusLost(evt);
+            }
+        });
+
+        txtDescripcion.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtDescripcionFocusLost(evt);
+            }
+        });
+
+        txtPrecio.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtPrecioFocusLost(evt);
+            }
+        });
 
         lblStock.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         lblStock.setText("Stock:");
@@ -131,8 +173,10 @@ public class GestionDeProducto extends javax.swing.JInternalFrame {
         );
 
         btnGuardar.setText("Guardar");
+        btnGuardar.addActionListener(this::btnGuardarActionPerformed);
 
         btnEliminar.setText("Eliminar");
+        btnEliminar.addActionListener(this::btnEliminarActionPerformed);
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -154,7 +198,7 @@ public class GestionDeProducto extends javax.swing.JInternalFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(btnCerrar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 74, Short.MAX_VALUE))))
+                            .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))))
                 .addContainerGap(54, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
@@ -190,6 +234,11 @@ public class GestionDeProducto extends javax.swing.JInternalFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
+        tableGestionDeProductos.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tableGestionDeProductosMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(tableGestionDeProductos);
 
         lblFiltrarporCategoria.setText("Filtrar por Categoria:");
@@ -268,6 +317,131 @@ public class GestionDeProducto extends javax.swing.JInternalFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void cmbFiltrarPorCategoriaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbFiltrarPorCategoriaActionPerformed
+        // TODO add your handling code here:
+        llenarTabla();
+    }//GEN-LAST:event_cmbFiltrarPorCategoriaActionPerformed
+
+    private void btnNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuevoActionPerformed
+        // TODO add your handling code here:
+        limpiarCampos();
+        activarCampos();
+        btnActualizar.setEnabled(false);
+        btnGuardar.setEnabled(true);
+    }//GEN-LAST:event_btnNuevoActionPerformed
+
+    private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
+        // TODO add your handling code here:
+        Producto pro = new Producto();
+        pro.setCodigo(Integer.parseInt(txtCodigo.getText()));
+        pro.setDescripcion(txtDescripcion.getText());
+        pro.setPrecio(Double.parseDouble(txtPrecio.getText()));
+        pro.setCategoria((Categoria) cmbRubro.getSelectedItem());
+        pro.setStock((Integer) spnStock.getValue());
+
+        pd.guardarProducto(pro);
+        llenarTabla();
+        limpiarCampos();
+        desactivarCampos();
+        btnGuardar.setEnabled(false);
+    }//GEN-LAST:event_btnGuardarActionPerformed
+
+    private void btnActualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnActualizarActionPerformed
+        // TODO add your handling code here:
+        int codigo = Integer.parseInt(txtCodigo.getText());
+        String descripcion = txtDescripcion.getText();
+        double precio = Double.parseDouble(txtPrecio.getText());
+        Categoria categoria = (Categoria) cmbFiltrarPorCategoria.getSelectedItem();
+        int stock = (Integer) spnStock.getValue();
+
+        productoElegido.setCodigo(codigo);
+        productoElegido.setDescripcion(descripcion);
+        productoElegido.setPrecio(precio);
+        productoElegido.setCategoria(categoria);
+        productoElegido.setStock(stock);
+
+        pd.modificarProductor(productoElegido);
+        productoElegido = null;
+        limpiarCampos();
+        desactivarCampos();
+        llenarTabla();
+        btnActualizar.setEnabled(false);
+    }//GEN-LAST:event_btnActualizarActionPerformed
+
+    private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
+        // TODO add your handling code here:
+        pd.borrarProducto(productoElegido);
+        llenarTabla();
+        limpiarCampos();
+        desactivarCampos();
+        btnEliminar.setEnabled(false);
+    }//GEN-LAST:event_btnEliminarActionPerformed
+
+    private void btnCerrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCerrarActionPerformed
+        // TODO add your handling code here:
+        dispose();
+    }//GEN-LAST:event_btnCerrarActionPerformed
+
+    private void txtPrecioFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtPrecioFocusLost
+        // TODO add your handling code here:
+        try {
+            String precio = txtPrecio.getText();
+            double pre = Double.parseDouble(precio);
+        } catch (NumberFormatException nf) {
+            JOptionPane.showMessageDialog(this, "Debe ingresar un precio valido");
+            txtPrecio.requestFocus();
+        }
+    }//GEN-LAST:event_txtPrecioFocusLost
+
+    private void txtDescripcionFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtDescripcionFocusLost
+        // TODO add your handling code here:
+        if (txtDescripcion.getText().length() == 0) {
+            JOptionPane.showMessageDialog(this, "La descripcion no debe estar vacia");
+            txtDescripcion.requestFocus();
+        }
+    }//GEN-LAST:event_txtDescripcionFocusLost
+
+    private void txtCodigoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtCodigoFocusLost
+        // TODO add your handling code here:
+        String val = "[0-9]*";
+        if (!txtCodigo.getText().matches(val)) {
+            JOptionPane.showMessageDialog(this, "Debe ingresar solo números");
+            txtCodigo.requestFocus();
+        }
+    }//GEN-LAST:event_txtCodigoFocusLost
+
+    private void tableGestionDeProductosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableGestionDeProductosMouseClicked
+        // TODO add your handling code here:
+        btnActualizar.setEnabled(true);
+        btnEliminar.setEnabled(true);
+        int filaElegida = tableGestionDeProductos.getSelectedRow();
+
+        if (filaElegida != -1) {
+            int idProducto = (Integer) tableGestionDeProductos.getValueAt(filaElegida, 0);
+            int codigo = (Integer) tableGestionDeProductos.getValueAt(filaElegida, 1);
+            String descripcion = (String) tableGestionDeProductos.getValueAt(filaElegida, 2);
+            double precio = (Double) tableGestionDeProductos.getValueAt(filaElegida, 3);
+            Categoria tablaCate = (Categoria) tableGestionDeProductos.getValueAt(filaElegida, 4);
+            int stock = (Integer) tableGestionDeProductos.getValueAt(filaElegida, 5);
+
+            txtCodigo.setText(codigo + "");
+            txtDescripcion.setText(descripcion);
+            txtPrecio.setText(precio + "");
+            cmbRubro.setSelectedItem(tablaCate);
+            spnStock.setValue(stock);
+
+            activarCampos();
+            productoElegido = new Producto();
+            productoElegido.setIdProducto(idProducto);
+            productoElegido.setCodigo(codigo);
+            productoElegido.setDescripcion(descripcion);
+            productoElegido.setPrecio(precio);
+            productoElegido.setCategoria(tablaCate);
+            productoElegido.setStock(stock);
+
+        }
+    }//GEN-LAST:event_tableGestionDeProductosMouseClicked
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnActualizar;
@@ -275,8 +449,8 @@ public class GestionDeProducto extends javax.swing.JInternalFrame {
     private javax.swing.JButton btnEliminar;
     private javax.swing.JButton btnGuardar;
     private javax.swing.JButton btnNuevo;
-    private javax.swing.JComboBox<String> cmbFiltrarPorCategoria;
-    private javax.swing.JComboBox<String> cmbRubro;
+    private javax.swing.JComboBox<Categoria> cmbFiltrarPorCategoria;
+    private javax.swing.JComboBox<Categoria> cmbRubro;
     private javax.swing.JButton jButton1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
@@ -296,4 +470,77 @@ public class GestionDeProducto extends javax.swing.JInternalFrame {
     private javax.swing.JTextField txtDescripcion;
     private javax.swing.JTextField txtPrecio;
     // End of variables declaration//GEN-END:variables
+
+    private void llenarCM() {
+        for (Categoria l : cd.obtenerCategoria()) {
+            cmbFiltrarPorCategoria.addItem(l);
+            cmbRubro.addItem(l);
+
+            cmbFiltrarPorCategoria.setSelectedIndex(-1);
+        }
+    }
+
+    private void activarCampos() {
+        txtCodigo.setEnabled(true);
+        txtDescripcion.setEnabled(true);
+        txtPrecio.setEnabled(true);
+        spnStock.setEnabled(true);
+        cmbRubro.setEnabled(true);
+    }
+
+    private void desactivarCampos() {
+        txtCodigo.setEnabled(false);
+        txtDescripcion.setEnabled(false);
+        txtPrecio.setEnabled(false);
+        spnStock.setEnabled(false);
+        cmbRubro.setEnabled(false);
+    }
+
+    private void limpiarCampos() {
+        txtCodigo.setText("");
+        txtDescripcion.setText("");
+        txtPrecio.setText("");
+        cmbRubro.setSelectedIndex(-1);
+        spnStock.setValue(0);
+    }
+
+    private void llenarCabezera() {
+        ArrayList<Object> c = new ArrayList<>();
+        c.add("ID");
+        c.add("Codigo");
+        c.add("Descripcion");
+        c.add("Precio");
+        c.add("Categoria");
+        c.add("Stock");
+
+        for (Object it : c) {
+            modelo.addColumn(it);
+            tableGestionDeProductos.setModel(modelo);
+
+        }
+    }
+
+    private void llenarTabla() {
+
+        borrarFila();
+        Categoria sel = (Categoria) cmbFiltrarPorCategoria.getSelectedItem();
+
+        if (sel != null) {
+            for (Producto p : pd.obtenerProducto()) {
+
+                if (p.getCategoria().equals(sel)) {
+
+                    modelo.addRow(new Object[]{p.getIdProducto(), p.getCodigo(), p.getDescripcion(), p.getPrecio(), p.getCategoria(), p.getStock()});
+                }
+            }
+        }
+    }
+
+    private void borrarFila() {
+        int a = modelo.getRowCount() - 1;
+
+        for (int i = a; i >= 0; i--) {
+            modelo.removeRow(i);
+        }
+    }
 }
