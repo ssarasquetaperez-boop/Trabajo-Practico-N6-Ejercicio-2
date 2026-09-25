@@ -4,11 +4,9 @@
  */
 package vistas;
 
-import entidades.Categoria;
 import entidades.CategoriaData;
 import entidades.Producto;
 import entidades.ProductoData;
-import java.lang.module.ModuleDescriptor;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -52,6 +50,7 @@ public class ConsultarPorPrecio extends javax.swing.JInternalFrame {
         jLabel3 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
         txtPrecio2 = new javax.swing.JTextField();
+        jButton1 = new javax.swing.JButton();
 
         setPreferredSize(new java.awt.Dimension(500, 450));
 
@@ -74,11 +73,8 @@ public class ConsultarPorPrecio extends javax.swing.JInternalFrame {
 
         jLabel1.setText("Lista por Precio");
 
-        txtPrecio2.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                txtPrecio2KeyReleased(evt);
-            }
-        });
+        jButton1.setText("jButton1");
+        jButton1.addActionListener(this::jButton1ActionPerformed);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -100,7 +96,9 @@ public class ConsultarPorPrecio extends javax.swing.JInternalFrame {
                                 .addGap(18, 18, 18)
                                 .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtPrecio2, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                                .addComponent(txtPrecio2, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(45, 45, 45)
+                                .addComponent(jButton1)))))
                 .addContainerGap(19, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -113,7 +111,8 @@ public class ConsultarPorPrecio extends javax.swing.JInternalFrame {
                     .addComponent(jLabel2)
                     .addComponent(jLabel3)
                     .addComponent(txtPrecio1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtPrecio2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtPrecio2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton1))
                 .addGap(50, 50, 50)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(22, Short.MAX_VALUE))
@@ -135,13 +134,14 @@ public class ConsultarPorPrecio extends javax.swing.JInternalFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void txtPrecio2KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtPrecio2KeyReleased
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
         llenarTabla();
-    }//GEN-LAST:event_txtPrecio2KeyReleased
+    }//GEN-LAST:event_jButton1ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -171,26 +171,39 @@ public class ConsultarPorPrecio extends javax.swing.JInternalFrame {
     private void llenarTabla() {
 
         borrarFila();
-
+            if (txtPrecio1.getText().trim().isEmpty() || txtPrecio2.getText().trim().isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Debe completar todos los campos",
+                        "Completar los campos",
+                        JOptionPane.WARNING_MESSAGE);
+        return;
+    }
+        
         try {
             double min = Double.parseDouble(txtPrecio1.getText());
             double max = Double.parseDouble(txtPrecio2.getText());
-                for (Producto p : pd.obtenerProducto()) {
+            if (min > max) {
+                JOptionPane.showMessageDialog(this, "El valor mínimo no puede ser mayor al máximo.",
+                        "ALERTA",
+                        JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            for (Producto p : pd.obtenerProducto()) {
 
-                    if (p.getPrecio() >= min && p.getPrecio() <= max) {
+                if (p.getPrecio() >= min && p.getPrecio() <= max) {
 
-                        modelo.addRow(new Object[]{
-                            p.getIdProducto(),
-                            p.getCodigo(),
-                            p.getDescripcion(),
-                            p.getPrecio(),
-                            p.getCategoria(),
-                            p.getStock()
-                        });
+                    modelo.addRow(new Object[]{
+                        p.getIdProducto(),
+                        p.getCodigo(),
+                        p.getDescripcion(),
+                        p.getPrecio(),
+                        p.getCategoria(),
+                        p.getStock()
+                    });
                 }
             }
         } catch (NumberFormatException e) {
-            JOptionPane.showConfirmDialog(this, "Tiene que tener numero valido");
+            JOptionPane.showConfirmDialog(this, "Tiene que tener nímeros valido");
+            return;
         }
     }
 
