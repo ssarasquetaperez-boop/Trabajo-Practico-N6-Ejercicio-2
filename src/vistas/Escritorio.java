@@ -4,11 +4,23 @@
  */
 package vistas;
 
+import entidades.Categoria;
+import entidades.CategoriaData;
+import entidades.Producto;
+import entidades.ProductoData;
+import java.util.ArrayList;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author marti
  */
 public class Escritorio extends javax.swing.JFrame {
+    
+    private CategoriaData cd;
+    private ProductoData pd;
+    private DefaultTableModel modelo;
+    private Producto productoElegido;
 
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Escritorio.class.getName());
 
@@ -17,6 +29,12 @@ public class Escritorio extends javax.swing.JFrame {
      */
     public Escritorio() {
         initComponents();
+        pd = new ProductoData();
+        cd = new CategoriaData();
+        modelo = new DefaultTableModel();
+        llenarCM();
+        desactivarCampos();
+        llenarCabezera();
     }
 
     /**
@@ -146,4 +164,78 @@ public class Escritorio extends javax.swing.JFrame {
     private javax.swing.JMenuItem miConsultarPorRubro;
     private javax.swing.JMenuItem miProducto;
     // End of variables declaration//GEN-END:variables
+
+    private void llenarCM() {
+        for (Categoria l : cd.obtenerCategoria()) {
+            cmbFiltrarPorCategoria.addItem(l);
+            cmbGestionDeProductosCombo.addItem(l);
+
+            cmbFiltrarPorCategoria.setSelectedIndex(-1);
+        }
+    }
+
+    private void activarCampos() {
+        txtGestionDeProductosCodigo.setEnabled(true);
+        txtGestionDeProductosDescripcion.setEnabled(true);
+        txtGestionDeProductosPrecio.setEnabled(true);
+        spnGestionDeProductos.setEnabled(true);
+        cmbGestionDeProductosCombo.setEnabled(true);
+    }
+
+    private void desactivarCampos() {
+        txtGestionDeProductosCodigo.setEnabled(false);
+        txtGestionDeProductosDescripcion.setEnabled(false);
+        txtGestionDeProductosPrecio.setEnabled(false);
+        spnGestionDeProductos.setEnabled(false);
+        cmbGestionDeProductosCombo.setEnabled(false);
+    }
+
+    private void limpiarCampos() {
+        txtGestionDeProductosCodigo.setText("");
+        txtGestionDeProductosDescripcion.setText("");
+        txtGestionDeProductosPrecio.setText("");
+        cmbGestionDeProductosCombo.setSelectedIndex(-1);
+        spnGestionDeProductos.setValue(0);
+    }
+
+    private void llenarCabezera() {
+        ArrayList<Object> c = new ArrayList<>();
+        c.add("ID");
+        c.add("Codigo");
+        c.add("Descripcion");
+        c.add("Precio");
+        c.add("Categoria");
+        c.add("Stock");
+
+        for (Object it : c) {
+            modelo.addColumn(it);
+            tblGestionDeProductos.setModel(modelo);
+
+        }
+    }
+
+    private void llenarTabla() {
+
+        borrarFila();
+        Categoria sel = (Categoria) cmbFiltrarPorCategoria.getSelectedItem();
+
+        if (sel != null) {
+            for (Producto p : pd.obtenerProducto()) {
+
+                if (p.getCategoria().equals(sel)) {
+
+                    modelo.addRow(new Object[]{p.getIdProducto(), p.getCodigo(), p.getDescripcion(), p.getPrecio(), p.getCategoria(), p.getStock()});
+                }
+            }
+        }
+    }
+
+    private void borrarFila() {
+        int a = modelo.getRowCount() - 1;
+
+        for (int i = a; i >= 0; i--) {
+            modelo.removeRow(i);
+        }
+    }
 }
+
