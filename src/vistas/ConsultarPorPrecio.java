@@ -52,6 +52,8 @@ public class ConsultarPorPrecio extends javax.swing.JInternalFrame {
         txtPrecio2 = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
 
+        setClosable(true);
+        setTitle("Lista por Precio");
         setPreferredSize(new java.awt.Dimension(500, 450));
 
         tableConsultaPrecio.setModel(new javax.swing.table.DefaultTableModel(
@@ -73,7 +75,7 @@ public class ConsultarPorPrecio extends javax.swing.JInternalFrame {
 
         jLabel1.setText("Lista por Precio");
 
-        jButton1.setText("jButton1");
+        jButton1.setText("Buscar");
         jButton1.addActionListener(this::jButton1ActionPerformed);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
